@@ -75,6 +75,16 @@ var getPhotosParamChecker = createStrictShapeTypeChecker({
    * Filter by mimetype (e.g. image/jpeg).
    */
   mimeTypes: ReactPropTypes.arrayOf(ReactPropTypes.string),
+   /**
+   * Beta filterByScreenShot
+   */
+  filterByScreenShot: ReactPropTypes.bool,
+
+ /**
+   * Beta limitDate
+   */
+  limitDate: ReactPropTypes.number,
+
 });
 
 /**
