@@ -1,4 +1,4 @@
-/**
+      /**
  * Copyright (c) 2015-present, Facebook, Inc.
  * All rights reserved.
  *
@@ -153,12 +153,19 @@ RCT_EXPORT_METHOD(getPhotos:(NSDictionary *)params
   NSUInteger first = [RCTConvert NSInteger:params[@"first"]];
   NSString *afterCursor = [RCTConvert NSString:params[@"after"]];
   NSString *groupName = [RCTConvert NSString:params[@"groupName"]];
+  BOOL filterByScreenShot = [RCTConvert BOOL:params[@"filterByScreenShot"]];
+  NSNumber *limitDateNumber = [RCTConvert NSNumber:params[@"limitDate"]];
   ALAssetsFilter *assetType = [RCTConvert ALAssetsFilter:params[@"assetType"]];
   ALAssetsGroupType groupTypes = [RCTConvert ALAssetsGroupType:params[@"groupTypes"]];
 
   BOOL __block foundAfter = NO;
   BOOL __block hasNextPage = NO;
   BOOL __block resolvedPromise = NO;
+  
+  // Convert NSString to NSTimeInterval
+  NSTimeInterval seconds = [limitDateNumber doubleValue]/1000;
+  NSDate *limitDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
+  NSLog(@"%@", limitDate);
   NSMutableArray<NSDictionary<NSString *, id> *> *assets = [NSMutableArray new];
 
   [_bridge.assetsLibrary enumerateGroupsWithTypes:groupTypes usingBlock:^(ALAssetsGroup *group, BOOL *stopGroups) {
@@ -174,6 +181,11 @@ RCT_EXPORT_METHOD(getPhotos:(NSDictionary *)params
             }
             return; // Skip until we get to the first one
           }
+          
+          if (filterByScreenShot && ![[[result defaultRepresentation] UTI] isEqualToString:@"public.png"]) {
+            return;
+          }
+          
           if (first == assets.count) {
             *stopAssets = YES;
             *stopGroups = YES;
@@ -183,10 +195,20 @@ RCT_EXPORT_METHOD(getPhotos:(NSDictionary *)params
             resolvedPromise = YES;
             return;
           }
+          
+          
           CGSize dimensions = [result defaultRepresentation].dimensions;
           CLLocation *loc = [result valueForProperty:ALAssetPropertyLocation];
           NSDate *date = [result valueForProperty:ALAssetPropertyDate];
           NSString *filename = [result defaultRepresentation].filename;
+
+          if (limitDate!= nil && [date timeIntervalSinceDate:limitDate]<=0){
+            *stopAssets = YES;
+            *stopGroups = YES;
+            hasNextPage = NO;
+            return;
+          }
+          
           [assets addObject:@{
             @"node": @{
               @"type": [result valueForProperty:ALAssetPropertyType],
