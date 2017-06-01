@@ -11,7 +11,6 @@
  */
 'use strict';
 
-// $FlowFixMe `checkPropTypes` is not in Flow's built in React typedefs yet.
 var {PropTypes, checkPropTypes} = require('React');
 var RCTCameraRollManager = require('NativeModules').CameraRollManager;
 
@@ -76,6 +75,16 @@ var getPhotosParamChecker = createStrictShapeTypeChecker({
    * Filter by mimetype (e.g. image/jpeg).
    */
   mimeTypes: PropTypes.arrayOf(PropTypes.string),
+
+  /**
+   * Beta filterByScreenShot
+   */
+  filterByScreenShot: PropTypes.bool,
+
+ /**
+   * Beta limitDate
+   */
+  limitDate: PropTypes.number,
 });
 
 /**
@@ -117,8 +126,8 @@ var getPhotosReturnChecker = createStrictShapeTypeChecker({
  *
  * ### Permissions
  * The user's permission is required in order to access the Camera Roll on devices running iOS 10 or later.
- * Fill out the `NSCameraUsageDescription` key in your `Info.plist` with a string that describes how your
- * app will use this data. This key will appear as `Privacy - Camera Usage Description` in Xcode.
+ * Add the `NSPhotoLibraryUsageDescription` key in your `Info.plist` with a string that describes how your
+ * app will use this data. This key will appear as `Privacy - Photo Library Usage Description` in Xcode.
  *
  */
 class CameraRoll {
