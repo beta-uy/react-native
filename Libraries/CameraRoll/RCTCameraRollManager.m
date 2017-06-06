@@ -163,12 +163,11 @@ RCT_EXPORT_METHOD(getPhotos:(NSDictionary *)params
   BOOL __block resolvedPromise = NO;
   NSMutableArray<NSDictionary<NSString *, id> *> *assets = [NSMutableArray new];
 
+  NSDate *limitDate;
   if(limitDateNumber != nil) {
     // Convert NSString to NSTimeInterval
     NSTimeInterval seconds = [limitDateNumber doubleValue]/1000;
-    NSDate *limitDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
-    NSLog(@"%@", limitDate);
-    NSMutableArray<NSDictionary<NSString *, id> *> *assets = [NSMutableArray new];
+    limitDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
   }
 
   [_bridge.assetsLibrary enumerateGroupsWithTypes:groupTypes usingBlock:^(ALAssetsGroup *group, BOOL *stopGroups) {
