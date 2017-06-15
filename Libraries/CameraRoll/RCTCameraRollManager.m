@@ -163,12 +163,10 @@ RCT_EXPORT_METHOD(getPhotos:(NSDictionary *)params
   BOOL __block resolvedPromise = NO;
   NSMutableArray<NSDictionary<NSString *, id> *> *assets = [NSMutableArray new];
 
-  NSDate *limitDate;
-  if(limitDateNumber != nil) {
-    // Convert NSString to NSTimeInterval
-    NSTimeInterval seconds = [limitDateNumber doubleValue]/1000;
-    limitDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
-  }
+
+  NSTimeInterval seconds = [limitDateNumber doubleValue]/1000;
+  NSDate *limitDate = [[NSDate alloc] initWithTimeIntervalSince1970:seconds];
+  NSLog(@"%@", limitDate);
 
   [_bridge.assetsLibrary enumerateGroupsWithTypes:groupTypes usingBlock:^(ALAssetsGroup *group, BOOL *stopGroups) {
     if (group && (groupName == nil || [groupName isEqualToString:[group valueForProperty:ALAssetsGroupPropertyName]])) {
@@ -202,13 +200,12 @@ RCT_EXPORT_METHOD(getPhotos:(NSDictionary *)params
           CLLocation *loc = [result valueForProperty:ALAssetPropertyLocation];
           NSDate *date = [result valueForProperty:ALAssetPropertyDate];
           NSString *filename = [result defaultRepresentation].filename;
+          
+//          NSTimeInterval distanceBetweenDates = [date timeIntervalSinceDate:limitDate];
+//          double secondsInAnHour = 3600;
+//          NSInteger hoursBetweenDates = distanceBetweenDates / secondsInAnHour;
 
-          if (limitDate!= nil && [date timeIntervalSinceDate:limitDate]<=0){
-           *stopAssets = YES;
-           *stopGroups = YES;
-           hasNextPage = NO;
-           return;
-         }
+//          NSLog(@"distanceBetweenDates %f %ld", distanceBetweenDates, (long)hoursBetweenDates);
 
           [assets addObject:@{
             @"node": @{
