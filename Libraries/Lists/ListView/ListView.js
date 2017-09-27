@@ -596,7 +596,10 @@ var ListView = React.createClass({
     }
     if (updatedFrames) {
       updatedFrames.forEach((newFrame) => {
-        this._childFrames[newFrame.index] = merge(newFrame);
+        // this._childFrames[newFrame.index] = merge(newFrame);
+        if (!(newFrame.x === 0 && newFrame.y === 0 && newFrame.width === 0 && newFrame.height === 0)) {
+          this._childFrames[newFrame.index] = merge(newFrame);
+        }
       });
     }
     var isVertical = !this.props.horizontal;
